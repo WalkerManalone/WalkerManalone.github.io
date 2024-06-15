@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header .logo {
+            font-size: 24px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .header .download {
+            background-color: #ffcc00;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .search-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .search-container input {
+            width: 80%;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            position: relative;
+        }
+
+        .suggestions {
+            position: absolute;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 2px;
+            width: 80%;
+            z-index: 1000;
+        }
+
+        .suggestions li {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .suggestions li:hover {
+            background-color: #f0f0f0;
+        }
+
+        .search-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .search-container button:hover {
+            background-color: #45a049;
+        }
+
+        .history {
+            margin-top: 20px;
+        }
+
+        .history h2 {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .history ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .history ul li {
+            background-color: #ffffff;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .history ul li a {
+            text-decoration: none;
+            color: #333;
+            flex-grow: 1;
+        }
+
+        .history ul li button {
+            background: none;
+            border: none;
+            color: #ff0000;
+            cursor: pointer;
+        }
+
+        .footer {
+            background-color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            color: #333;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 20px;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .bottom-bar a {
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .bottom-bar a img {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="#" class="logo">无线电</a>
+        <a href="#" class="download">下载APP</a>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="搜索" oninput="showSuggestions(this.value)">
+        <button onclick="search()">搜索</button>
+        <ul id="suggestions" class="suggestions"></ul>
+    </div>
+
+    <div class="history">
+        <h2>搜索历史</h2>
+        <ul id="history-list">
+            <!-- 搜索历史记录将在此显示 -->
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>Copyright © 2023 - 2024 Walkman. All Rights Reserved.</p>
+        <p>安装无线电 发现更多精彩</p>
+    </div>
+
+    <div class="bottom-bar">
+        <a href="index.html">
+            <img src="img/home.png" alt="首页">
+            首页
+        </a>
+        <a href="#">
+            <img src="img/search.png" alt="发现">
+            发现
+        </a>
+        <a href="#">
+            <img src="img/library.png" alt="音乐馆">
+            音乐馆
+        </a>
+        <a href="account.php">
+            <img src="img/user.png" alt="我的">
+            我的
+        </a>
+    </div>
+
+    <script>
+        function search() {
+            const query = document.getElementById('search-input').value;
+            if (query) {
+                saveHistory(query);
+                window.location.href = `search_results.html?q=${query}`;
+            }
+        }
+
+        function saveHistory(query) {
+            let history = getHistory();
+            if (!history.includes(query)) {
+                history.push(query);
+                localStorage.setItem('searchHistory', JSON.stringify(history));
+                displayHistory();
+            }
+        }
+
+        function getHistory() {
+            const history = localStorage.getItem('searchHistory');
+            return history ? JSON.parse(history) : [];
+        }
+
+        function displayHistory() {
+            const history = getHistory();
+            const historyList = document.getElementById('history-list');
+            historyList.innerHTML = '';
+            history.forEach(item => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                const btn = document.createElement('button');
+
+                a.href = `search_results.html?q=${item}`;
+                a.textContent = item;
+                btn.textContent = '删除';
+                btn.onclick = () => deleteHistory(item);
+
+                li.appendChild(a);
+                li.appendChild(btn);
+                historyList.appendChild(li);
+            });
+        }
+
+        function deleteHistory(query) {
+            let history = getHistory();
+            history = history.filter(item => item !== query);
+            localStorage.setItem('searchHistory', JSON.stringify(history));
+            displayHistory();
+        }
+
+        function showSuggestions(query) {
+            if (query.length < 1) {
+                document.getElementById('suggestions').innerHTML = '';
+                return;
+            }
+            
+            fetch(`suggestions.php?q=${query}`)
+                .then(response => response.json())
+                .then(data => {
+                    const suggestions = document.getElementById('suggestions');
+                    suggestions.innerHTML = '';
+                    data.forEach(item => {
+                        const li = document.createElement('li');
+                        li.textContent = `${item.title} - ${item.artist}`;
+                        li.onclick = () => {
+                            document.getElementById('search-input').value = item.title;
+                            suggestions.innerHTML = '';
+                        };
+                        suggestions.appendChild(li);
+                    });
+                });
+        }
+
+        window.onload = displayHistory;
+    </script>
+</body>
+</html>
