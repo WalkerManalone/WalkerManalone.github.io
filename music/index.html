@@ -3,300 +3,371 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>旋转封面播放器</title>
+    <title>无线电--音乐无国界~</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background: url('cover.jpg') no-repeat center center fixed;
-            background-size: cover;
-            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 10px 20px;
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
-            flex-direction: column;
-        }
-
-        .content {
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 80%;
-            max-width: 400px;
-        }
-
-        .player-container {
-            width: 100%;
             position: relative;
-            overflow: hidden;
-            border-radius: 50%;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
-        .album-cover {
-            width: 100%;
-            height: auto;
-            border-radius: 50%;
-            transition: transform 1s linear;
+        .header .logo {
+            font-size: 24px;
+            color: #333;
+            text-decoration: none;
         }
 
-        .play-btn {
+        .header .right a {
+            margin-left: 20px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .header .download {
+            background-color: #ffcc00;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .search-bar {
             position: absolute;
-            top: 50%;
+            top: 60px;
             left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            background-color: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
+            transform: translateX(-50%);
+            width: 90%;
             display: flex;
-            justify-content: center;
             align-items: center;
+            background-color: #ffffff;
+            padding: 5px 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 20px;
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            flex: 1;
+            padding: 5px 10px;
+        }
+
+        .search-bar button {
+            background: none;
+            border: none;
             cursor: pointer;
         }
 
-        .play-btn img {
+        .main-content {
+            padding: 80px 20px 20px 20px;
+        }
+
+        .main-content h2 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .playlist-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .playlist {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            width: calc(33.333% - 20px);
+        }
+
+        .playlist img {
+            width: 100%;
+            height: auto;
+        }
+
+        .playlist .info {
+            padding: 10px;
+        }
+
+        .playlist .info h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        .playlist .info p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .footer {
+            background-color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            color: #333;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .bottom-bar a {
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .bottom-bar a img {
             width: 24px;
             height: 24px;
         }
 
-        .progress-container {
-            width: 100%;
-            margin: 20px auto;
-            background-color: #ddd;
-            border-radius: 5px;
-            height: 10px;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .progress-bar {
-            background-color: #4caf50;
-            height: 100%;
-            width: 0;
-            border-radius: 5px;
-        }
-
-        .time-info {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            margin: 5px auto;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .lyrics {
-            margin-top: 10px;
-            font-size: 16px;
-            color: #333;
-            height: 50px;
-            overflow-y: auto;
-        }
-
-        .song-info {
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        .song-info h2 {
-            font-size: 24px;
-            margin: 10px 0;
-        }
-
-        .song-info p {
-            font-size: 18px;
-            color: #666;
-        }
-
-        .additional-info {
-            margin-top: 20px;
-            text-align: left;
-        }
-
-        .additional-info img {
-            width: 50px;
-            height: 50px;
+        .floating-player {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            vertical-align: middle;
-        }
-
-        .additional-info div {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            background-color: #fff;
             display: flex;
+            justify-content: center;
             align-items: center;
-            margin-top: 10px;
+            cursor: pointer;
+            overflow: hidden;
         }
 
-        .additional-info div p {
-            margin-left: 10px;
-            font-size: 16px;
+        .floating-player img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
         }
 
-        .additional-info div a {
-            margin-left: auto;
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-btn:hover,
+        .close-btn:focus {
+            color: black;
             text-decoration: none;
-            color: #666;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div class="content">
-        <div class="player-container">
-            <img class="album-cover" src="cover.jpg" alt="封面">
-            <div class="play-btn" onclick="togglePlay()">
-                <img id="play-pause-icon" src="https://img.icons8.com/material-rounded/24/000000/play.png" alt="播放">
+    <div class="header">
+        <a href="#" class="logo">无线电</a>
+        <div class="right">
+            <a href="#">推荐</a>
+            <a href="#">排行</a>
+            <a href="#" class="download">下载APP</a>
+        </div>
+    </div>
+
+    <div class="search-bar">
+        <input id="search-input" type="text" placeholder="搜索">
+        <button type="submit">
+            <img src="https://img.icons8.com/material-rounded/24/000000/search.png" alt="搜索" width="20">
+        </button>
+    </div>
+    
+    <div class="main-content">
+        <h2>官方歌单</h2>
+        <div class="playlist-container">
+            <!-- 官方歌单 -->
+            <div class="playlist">
+                <img src="https://source.unsplash.com/300x200/?music,party" alt="流行节奏控">
+                <div class="info">
+                    <h3>流行节奏控</h3>
+                    <p>8553.3万</p>
+                </div>
             </div>
-            <audio id="audio" src="青春舞曲2000.mp3" type="audio/mp3"></audio>
-        </div>
-
-        <div class="progress-container" id="progress-container">
-            <div class="progress-bar" id="progress-bar"></div>
-        </div>
-
-        <div class="time-info">
-            <span id="current-time">0:00</span>
-            <span id="duration">0:00</span>
-        </div>
-
-        <div class="lyrics" id="lyrics">暂无歌词</div>
-
-        <div class="song-info">
-            <h2>青春舞曲2000</h2>
-            <p>群星</p>
-        </div>
-
-        <div class="additional-info">
-            <h3>歌手与专辑</h3>
-            <div>
-                <img src="群星.jpg" alt="歌手 群星">
-                <p>歌手：群星</p>
-                <a href="#">></a>
+            <div class="playlist">
+                <img src="https://source.unsplash.com/300x200/?music,relax" alt="流行轻有氧">
+                <div class="info">
+                    <h3>流行轻有氧</h3>
+                    <p>16504.2万</p>
+                </div>
             </div>
-            <div>
-                <img src="cover.jpg" alt="专辑 皇后大道东">
-                <p>专辑：皇后大道东</p>
-                <a href="#">></a>
+            <div class="playlist">
+                <img src="https://source.unsplash.com/300x200/?music,singer" alt="最·陈奕迅">
+                <div class="info">
+                    <h3>最·陈奕迅</h3>
+                    <p>23231.3万</p>
+                </div>
+            </div>
+        </div>
+
+        <h2>达人歌单</h2>
+        <div class="playlist-container">
+            <!-- 达人歌单 -->
+            <div class="playlist">
+                <img src="https://source.unsplash.com/300x200/?retro,90s" alt="90后回忆">
+                <div class="info">
+                    <h3>90后回忆</h3>
+                    <p>7268.1万</p>
+                </div>
+            </div>
+            <div class="playlist">
+                <img src="https://source.unsplash.com/300x200/?rap,hiphop" alt="甜系rap">
+                <div class="info">
+                    <h3>甜系rap</h3>
+                    <p>187.1万</p>
+                </div>
+            </div>
+            <div class="playlist">
+                <img src="https://source.unsplash.com/300x200/?study,focus" alt="效率加倍">
+                <div class="info">
+                    <h3>效率加倍</h3>
+                    <p>19597.6万</p>
+                </div>
+            </div>
+        </div>
+
+        <h2>专区</h2>
+        <div class="playlist-container">
+            <!-- 专区 -->
+            <div class="playlist">
+                <img src="https://source.unsplash.com/300x200/?premium,audio" alt="臻品母带专区">
+                <div class="info">
+                    <h3>臻品母带专区</h3>
+                </div>
+            </div>
+            <div class="playlist">
+                <img src="https://source.unsplash.com/300x200/?relax,study" alt="松弛研习社">
+                <div class="info">
+                    <h3>松弛研习社</h3>
+                </div>
             </div>
         </div>
     </div>
 
+    <div class="footer">
+        <p>Copyright © 2023 - 2024 Walkman. All Rights Reserved.</p>
+        <p>安装无线电 发现更多精彩</p>
+    </div>
+
+    <div class="bottom-bar">
+        <a href="#">
+            <img src="img/home.png" alt="首页">
+            首页
+        </a>
+        <a href="search.html">
+            <img src="img/search.png" alt="发现">
+            发现
+        </a>
+        <a href="#">
+            <img src="img/library.png" alt="音乐馆">
+            音乐馆
+        </a>
+        <a href="account.php">
+            <img src="img/user.png" alt="我的">
+            我的
+        </a>
+    </div>
+
+    <div class="floating-player" onclick="toggleModal()">
+        <img id="floating-cover" src="https://source.unsplash.com/60x60/?music" alt="封面">
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="toggleModal()">&times;</span>
+            <iframe src="play.html" style="width: 100%; height: 400px; border: none;"></iframe>
+        </div>
+    </div>
+
     <script>
-    const playBtn = document.querySelector('.play-btn img');
-    const albumCover = document.querySelector('.album-cover');
-    const audio = document.getElementById('audio');
-    const progressBar = document.getElementById('progress-bar');
-    const progressContainer = document.getElementById('progress-container');
-    const currentTimeElem = document.getElementById('current-time');
-    const durationElem = document.getElementById('duration');
-    const lyricsElem = document.getElementById('lyrics');
+        let isPlaying = false;
 
-    let isPlaying = false;
-    let rotation = 0;
-    let intervalId = null;
-    let lyrics = [];
-    let currentLine = 0;
-
-    function togglePlay() {
-        if (isPlaying) {
-            clearInterval(intervalId);
-            audio.pause();
-            playBtn.src = "https://img.icons8.com/material-rounded/24/000000/play.png";
-        } else {
-            intervalId = setInterval(rotateCover, 50);
-            audio.play();
-            playBtn.src = "https://img.icons8.com/material-rounded/24/000000/pause.png";
+        function toggleModal() {
+            const modal = document.getElementById("modal");
+            modal.style.display = modal.style.display === "block" ? "none" : "block";
         }
-        isPlaying = !isPlaying;
-    }
 
-    function rotateCover() {
-        rotation += 1;
-        albumCover.style.transform = `rotate(${rotation}deg)`;
-    }
-
-    function parseLyrics(text) {
-        const lines = text.split('\n');
-        const parsedLyrics = lines.map(line => {
-            const parts = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
-            if (parts) {
-                const time = parseInt(parts[1], 10) * 60 + parseFloat(parts[2]);
-                const text = parts[3];
-                return { time, text };
-            }
-            return null;
-        }).filter(line => line !== null);
-        return parsedLyrics;
-    }
-
-    function updateLyrics() {
-        if (lyrics.length === 0) return;
-        const currentTime = audio.currentTime;
-        while (currentLine < lyrics.length - 1 && currentTime >= lyrics[currentLine + 1].time) {
-            currentLine++;
-        }
-        while (currentLine > 0 && currentTime < lyrics[currentLine].time) {
-            currentLine--;
-        }
-        if (currentLine < lyrics.length && currentTime >= lyrics[currentLine].time) {
-            lyricsElem.textContent = lyrics[currentLine].text;
-        }
-    }
-
-    async function loadLyrics() {
-        try {
-            const response = await fetch('青春舞曲2000.lrc');
-            if (response.ok) {
-                const text = await response.text();
-                lyrics = parseLyrics(text);
-                if (lyrics.length > 0) {
-                    lyricsElem.textContent = lyrics[0].text;
-                } else {
-                    lyricsElem.textContent = '暂无歌词';
-                }
-                audio.addEventListener('timeupdate', updateLyrics);
+        function togglePlay() {
+            const audio = document.getElementById('audio');
+            const playBtn = document.querySelector('.play-btn img');
+            const albumCover = document.querySelector('.album-cover');
+            const floatingCover = document.getElementById('floating-cover');
+            if (isPlaying) {
+                audio.pause();
+                playBtn.src = "https://img.icons8.com/material-rounded/24/000000/play.png";
+                albumCover.style.transform = "rotate(0deg)";
+                floatingCover.style.transform = "rotate(0deg)";
             } else {
-                lyricsElem.textContent = '暂无歌词';
+                audio.play();
+                playBtn.src = "https://img.icons8.com/material-rounded/24/000000/pause.png";
+                albumCover.style.transform = "rotate(360deg)";
+                floatingCover.style.transform = "rotate(360deg)";
             }
-        } catch (error) {
-            lyricsElem.textContent = '暂无歌词';
+            isPlaying = !isPlaying;
         }
-    }
 
-    audio.addEventListener('timeupdate', () => {
-        const progress = (audio.currentTime / audio.duration) * 100;
-        progressBar.style.width = `${progress}%`;
+        document.getElementById('search-input').addEventListener('focus', function() {
+            window.location.href = "search.html"; // Update this to your actual search page URL
+        });
 
-        const currentMinutes = Math.floor(audio.currentTime / 60);
-        const currentSeconds = Math.floor(audio.currentTime % 60);
-        currentTimeElem.textContent = `${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds}`;
-
-        const durationMinutes = Math.floor(audio.duration / 60);
-        const durationSeconds = Math.floor(audio.duration % 60);
-        durationElem.textContent = `${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
-    });
-
-    audio.addEventListener('ended', () => {
-        clearInterval(intervalId);
-        playBtn.src = "https://img.icons8.com/material-rounded/24/000000/play.png";
-        isPlaying = false;
-        progressBar.style.width = '0%';
-        rotation = 0;
-        albumCover.style.transform = `rotate(0deg)`;
-    });
-
-    progressContainer.addEventListener('click', (e) => {
-        const width = progressContainer.clientWidth;
-        const clickX = e.offsetX;
-        const duration = audio.duration;
-
-        audio.currentTime = (clickX / width) * duration;
-        updateLyrics(); // 手动更新歌词
-    });
-
-    loadLyrics();
-</script>
+        window.onclick = function(event) {
+            const modal = document.getElementById("modal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
 </body>
 </html>
