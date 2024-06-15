@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>旋转封面播放器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('cover.jpg') no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .content {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .player-container {
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .album-cover {
+            width: 100%;
+            height: auto;
+            border-radius: 50%;
+            transition: transform 1s linear;
+        }
+
+        .play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .play-btn img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .progress-container {
+            width: 100%;
+            margin: 20px auto;
+            background-color: #ddd;
+            border-radius: 5px;
+            height: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+            background-color: #4caf50;
+            height: 100%;
+            width: 0;
+            border-radius: 5px;
+        }
+
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin: 5px auto;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .lyrics {
+            margin-top: 10px;
+            font-size: 16px;
+            color: #333;
+            height: 50px;
+            overflow-y: auto;
+        }
+
+        .song-info {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .song-info h2 {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+
+        .song-info p {
+            font-size: 18px;
+            color: #666;
+        }
+
+        .additional-info {
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .additional-info img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+
+        .additional-info div {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .additional-info div p {
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
+        .additional-info div a {
+            margin-left: auto;
+            text-decoration: none;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <div class="player-container">
+            <img class="album-cover" src="cover.jpg" alt="封面">
+            <div class="play-btn" onclick="togglePlay()">
+                <img id="play-pause-icon" src="https://img.icons8.com/material-rounded/24/000000/play.png" alt="播放">
+            </div>
+            <audio id="audio" src="青春舞曲2000.mp3" type="audio/mp3"></audio>
+        </div>
+
+        <div class="progress-container" id="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <div class="time-info">
+            <span id="current-time">0:00</span>
+            <span id="duration">0:00</span>
+        </div>
+
+        <div class="lyrics" id="lyrics">暂无歌词</div>
+
+        <div class="song-info">
+            <h2>青春舞曲2000</h2>
+            <p>群星</p>
+        </div>
+
+        <div class="additional-info">
+            <h3>歌手与专辑</h3>
+            <div>
+                <img src="群星.jpg" alt="歌手 群星">
+                <p>歌手：群星</p>
+                <a href="#">></a>
+            </div>
+            <div>
+                <img src="cover.jpg" alt="专辑 皇后大道东">
+                <p>专辑：皇后大道东</p>
+                <a href="#">></a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const playBtn = document.querySelector('.play-btn img');
+    const albumCover = document.querySelector('.album-cover');
+    const audio = document.getElementById('audio');
+    const progressBar = document.getElementById('progress-bar');
+    const progressContainer = document.getElementById('progress-container');
+    const currentTimeElem = document.getElementById('current-time');
+    const durationElem = document.getElementById('duration');
+    const lyricsElem = document.getElementById('lyrics');
+
+    let isPlaying = false;
+    let rotation = 0;
+    let intervalId = null;
+    let lyrics = [];
+    let currentLine = 0;
+
+    function togglePlay() {
+        if (isPlaying) {
+            clearInterval(intervalId);
+            audio.pause();
+            playBtn.src = "https://img.icons8.com/material-rounded/24/000000/play.png";
+        } else {
+            intervalId = setInterval(rotateCover, 50);
+            audio.play();
+            playBtn.src = "https://img.icons8.com/material-rounded/24/000000/pause.png";
+        }
+        isPlaying = !isPlaying;
+    }
+
+    function rotateCover() {
+        rotation += 1;
+        albumCover.style.transform = `rotate(${rotation}deg)`;
+    }
+
+    function parseLyrics(text) {
+        const lines = text.split('\n');
+        const parsedLyrics = lines.map(line => {
+            const parts = line.match(/\[(\d+):(\d+\.\d+)\](.*)/);
+            if (parts) {
+                const time = parseInt(parts[1], 10) * 60 + parseFloat(parts[2]);
+                const text = parts[3];
+                return { time, text };
+            }
+            return null;
+        }).filter(line => line !== null);
+        return parsedLyrics;
+    }
+
+    function updateLyrics() {
+        if (lyrics.length === 0) return;
+        const currentTime = audio.currentTime;
+        while (currentLine < lyrics.length - 1 && currentTime >= lyrics[currentLine + 1].time) {
+            currentLine++;
+        }
+        while (currentLine > 0 && currentTime < lyrics[currentLine].time) {
+            currentLine--;
+        }
+        if (currentLine < lyrics.length && currentTime >= lyrics[currentLine].time) {
+            lyricsElem.textContent = lyrics[currentLine].text;
+        }
+    }
+
+    async function loadLyrics() {
+        try {
+            const response = await fetch('青春舞曲2000.lrc');
+            if (response.ok) {
+                const text = await response.text();
+                lyrics = parseLyrics(text);
+                if (lyrics.length > 0) {
+                    lyricsElem.textContent = lyrics[0].text;
+                } else {
+                    lyricsElem.textContent = '暂无歌词';
+                }
+                audio.addEventListener('timeupdate', updateLyrics);
+            } else {
+                lyricsElem.textContent = '暂无歌词';
+            }
+        } catch (error) {
+            lyricsElem.textContent = '暂无歌词';
+        }
+    }
+
+    audio.addEventListener('timeupdate', () => {
+        const progress = (audio.currentTime / audio.duration) * 100;
+        progressBar.style.width = `${progress}%`;
+
+        const currentMinutes = Math.floor(audio.currentTime / 60);
+        const currentSeconds = Math.floor(audio.currentTime % 60);
+        currentTimeElem.textContent = `${currentMinutes}:${currentSeconds < 10 ? '0' : ''}${currentSeconds}`;
+
+        const durationMinutes = Math.floor(audio.duration / 60);
+        const durationSeconds = Math.floor(audio.duration % 60);
+        durationElem.textContent = `${durationMinutes}:${durationSeconds < 10 ? '0' : ''}${durationSeconds}`;
+    });
+
+    audio.addEventListener('ended', () => {
+        clearInterval(intervalId);
+        playBtn.src = "https://img.icons8.com/material-rounded/24/000000/play.png";
+        isPlaying = false;
+        progressBar.style.width = '0%';
+        rotation = 0;
+        albumCover.style.transform = `rotate(0deg)`;
+    });
+
+    progressContainer.addEventListener('click', (e) => {
+        const width = progressContainer.clientWidth;
+        const clickX = e.offsetX;
+        const duration = audio.duration;
+
+        audio.currentTime = (clickX / width) * duration;
+        updateLyrics(); // 手动更新歌词
+    });
+
+    loadLyrics();
+</script>
+</body>
+</html>
