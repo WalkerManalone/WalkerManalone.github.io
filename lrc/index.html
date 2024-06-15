@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>滚动歌词编辑器 - 无线电</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .lyrics-container {
+            width: 90%;
+            max-width: 800px;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .lyrics {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            height: 300px;
+            overflow-y: auto;
+            color: #aaa;
+            border-radius: 4px;
+        }
+        .lyrics.editing {
+            color: #000;
+        }
+        .line {
+            margin: 5px 0;
+            padding: 5px 0;
+            border-bottom: 1px solid #ccc;
+        }
+        .line.selected {
+            background-color: #dcdcdc;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .controls input[type="file"] {
+            display: none;
+        }
+        .controls label, .controls img {
+            cursor: pointer;
+        }
+        .icon {
+            width: 24px;
+            height: 24px;
+            margin-left: 10px;
+        }
+        .progress-bar {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .progress-bar span {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="lyrics-container">
+        <div class="header">
+            <span class="title">滚动歌词编辑器 - 无线电</span>
+        </div>
+        <div class="lyrics" contenteditable="true" id="lyrics">
+            <div class="line">请输入歌词</div>
+        </div>
+        <div class="controls">
+            <label for="audioFileInput">
+                <img src="img/lrcmaker/upload.png" alt="选择文件" class="icon">
+            </label>
+            <input type="file" accept="audio/*" id="audioFileInput">
+            <audio id="audio" controls></audio>
+            <img src="img/lrcmaker/edit.png" alt="插入时间戳" class="icon" onclick="insertTimestamp()">
+            <img src="img/lrcmaker/download.png" alt="导出歌词" class="icon" onclick="exportLyrics()">
+        </div>
+        <div class="progress-bar">
+            <span class="time">00:00</span>
+            <span class="playback-rate">X 1.00</span>
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const audioFileInput = document.getElementById('audioFileInput');
+        const lyricsContainer = document.getElementById('lyrics');
+        let currentLineIndex = 0;
+
+        audioFileInput.onchange = function(event) {
+            const file = event.target.files[0];
+            const url = URL.createObjectURL(file);
+            audio.src = url;
+            audio.load();
+            audio.play();
+        };
+
+        audio.ontimeupdate = function() {
+            const currentTime = audio.currentTime;
+            document.querySelector('.progress-bar .time').innerText = formatTime(currentTime);
+
+            const lines = document.querySelectorAll('.line');
+            lines.forEach(line => {
+                const time = parseFloat(line.getAttribute('data-time'));
+                if (currentTime >= time) {
+                    line.style.backgroundColor = '#dcdcdc';
+                } else {
+                    line.style.backgroundColor = 'transparent';
+                }
+            });
+        };
+
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            const ms = Math.floor((seconds % 1) * 100);
+            return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}.${ms.toString().padStart(2, '0')}`;
+        }
+
+        function insertTimestamp() {
+            const lines = document.querySelectorAll('.line');
+            if (currentLineIndex < lines.length) {
+                const currentTime = audio.currentTime;
+                const currentLine = lines[currentLineIndex];
+                currentLine.setAttribute('data-time', currentTime.toFixed(2));
+                const timestamp = `[${formatTime(currentTime)}] `;
+                if (!currentLine.innerText.startsWith('[')) {
+                    currentLine.innerText = timestamp + currentLine.innerText;
+                } else {
+                    currentLine.innerText = currentLine.innerText.replace(/^\[.*?\] /, timestamp);
+                }
+                currentLine.classList.remove('selected');
+                currentLineIndex++;
+                if (currentLineIndex < lines.length) {
+                    lines[currentLineIndex].classList.add('selected');
+                }
+            }
+        }
+
+        function exportLyrics() {
+            const lines = document.querySelectorAll('.line');
+            let lyrics = '';
+            lines.forEach(line => {
+                const time = line.getAttribute('data-time');
+                const text = line.innerText.replace(/^\[.*?\] /, '');
+                lyrics += `[${formatTime(time)}] ${text}\n`;
+            });
+            const blob = new Blob([lyrics], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = audioFileInput.files[0].name.replace(/\.[^/.]+$/, "") + '.lrc';
+            link.click();
+        }
+
+        function clearPlaceholder() {
+            const firstLine = lyricsContainer.querySelector('.line');
+            if (firstLine && firstLine.innerText === '请输入歌词') {
+                lyricsContainer.innerHTML = '';
+                lyricsContainer.classList.add('editing');
+            }
+        }
+
+        function setPlaceholder() {
+            if (lyricsContainer.innerText.trim() === '') {
+                lyricsContainer.innerHTML = '<div class="line">请输入歌词</div>';
+                lyricsContainer.classList.remove('editing');
+            }
+        }
+
+        lyricsContainer.addEventListener('click', function(e) {
+            if (e.target.classList.contains('line')) {
+                const lines = document.querySelectorAll('.line');
+                lines.forEach(line => line.classList.remove('selected'));
+                e.target.classList.add('selected');
+                currentLineIndex = Array.from(lines).indexOf(e.target);
+            }
+        });
+
+        lyricsContainer.addEventListener('input', clearPlaceholder);
+
+        setPlaceholder();
+    </script>
+</body>
+</html>
