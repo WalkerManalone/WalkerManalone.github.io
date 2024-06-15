@@ -205,26 +205,26 @@
             const artistText = await artistResponse.text();
 
             songs = songText.trim().split('\n').map(line => {
-                const [id, name, link] = line.split(' ');
+                const [idPart, namePart, linkPart] = line.split(' ');
                 return {
-                    id: id.split(':')[1],
-                    title: name.split(':')[1],
-                    link: link.split(':')[1]
+                    id: idPart.split(':')[1],
+                    title: namePart.split(':')[1],
+                    link: linkPart.split(':')[1]
                 };
             });
 
             albums = albumText.trim().split('\n').map(line => {
-                const [id, name] = line.split(' ');
+                const [idPart, namePart] = line.split(' ');
                 return {
-                    id: id.split(':')[1],
-                    name: name.split(':')[1]
+                    id: idPart.split(':')[1],
+                    name: namePart.split(':')[1]
                 };
             });
 
             artists = artistText.trim().split('\n').map(line => {
-                const [id] = line.split(' ');
+                const [idPart] = line.split(' ');
                 return {
-                    id: id.split(':')[1]
+                    id: idPart.split(':')[1]
                 };
             });
         }
