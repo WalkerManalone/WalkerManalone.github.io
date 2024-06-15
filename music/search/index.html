@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索结果</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header .logo {
+            font-size: 24px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .header .download {
+            background-color: #ffcc00;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .search-container {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .search-container input {
+            width: 80%;
+            padding: 10px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .search-container button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            background-color: #4caf50;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .search-container button:hover {
+            background-color: #45a049;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .tabs button {
+            background: none;
+            border: none;
+            font-size: 16px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        .tabs button.active {
+            border-bottom: 2px solid #333;
+        }
+
+        .results {
+            padding: 20px;
+        }
+
+        .results h2 {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .results ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .results ul li {
+            background-color: #ffffff;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .results ul li a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .footer {
+            background-color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            color: #333;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 20px;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .bottom-bar a {
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .bottom-bar a img {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="#" class="logo">无线电</a>
+        <a href="#" class="download">下载APP</a>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="搜索">
+        <button onclick="search()">搜索</button>
+    </div>
+
+    <div class="tabs">
+        <button id="tab-songs" class="active" onclick="setTab('songs')">歌曲</button>
+        <button id="tab-artists" onclick="setTab('artists')">艺术家</button>
+        <button id="tab-albums" onclick="setTab('albums')">专辑</button>
+    </div>
+
+    <div class="results">
+        <h2>搜索结果</h2>
+        <ul id="results-list">
+            <!-- 搜索结果将在此显示 -->
+        </ul>
+    </div>
+
+    <div class="footer">
+        <p>Copyright © 2023 - 2024 Walkman. All Rights Reserved.</p>
+        <p>安装无线电 发现更多精彩</p>
+    </div>
+
+    <div class="bottom-bar">
+        <a href="index.html">
+            <img src="img/home.png" alt="首页">
+            首页
+        </a>
+        <a href="search.html">
+            <img src="img/search.png" alt="发现">
+            发现
+        </a>
+        <a href="#">
+            <img src="img/library.png" alt="音乐馆">
+            音乐馆
+        </a>
+        <a href="account.html">
+            <img src="img/user.png" alt="我的">
+            我的
+        </a>
+    </div>
+
+    <script>
+        let songs = [];
+        let albums = [];
+        let artists = [];
+
+        async function fetchData() {
+            const songResponse = await fetch('song.txt');
+            const albumResponse = await fetch('album.txt');
+            const artistResponse = await fetch('artist.txt');
+
+            const songText = await songResponse.text();
+            const albumText = await albumResponse.text();
+            const artistText = await artistResponse.text();
+
+            songs = songText.trim().split('\n').map(line => {
+                const [id, name, link] = line.split(' ');
+                return {
+                    id: id.split(':')[1],
+                    title: name.split(':')[1],
+                    link: link.split(':')[1]
+                };
+            });
+
+            albums = albumText.trim().split('\n').map(line => {
+                const [id, name] = line.split(' ');
+                return {
+                    id: id.split(':')[1],
+                    name: name.split(':')[1]
+                };
+            });
+
+            artists = artistText.trim().split('\n').map(line => {
+                const [id] = line.split(' ');
+                return {
+                    id: id.split(':')[1]
+                };
+            });
+        }
+
+        function search() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const tab = document.querySelector('.tabs button.active').id.replace('tab-', '');
+            if (query) {
+                let results = [];
+                if (tab === 'songs') {
+                    results = songs.filter(song => song.title.toLowerCase().includes(query));
+                } else if (tab === 'artists') {
+                    results = artists.filter(artist => artist.id.toLowerCase().includes(query));
+                } else if (tab === 'albums') {
+                    results = albums.filter(album => album.name.toLowerCase().includes(query));
+                }
+                displayResults(results, tab);
+            }
+        }
+
+        function setTab(tab) {
+            document.querySelectorAll('.tabs button').forEach(button => {
+                button.classList.remove('active');
+            });
+            document.getElementById(`tab-${tab}`).classList.add('active');
+
+            const query = document.getElementById('search-input').value;
+            if (query) {
+                search();
+            }
+        }
+
+        function displayResults(data, tab) {
+            const resultsList = document.getElementById('results-list');
+            resultsList.innerHTML = '';
+            if (data.length > 0) {
+                data.forEach(item => {
+                    let listItem = '';
+                    if (tab === 'songs') {
+                        listItem = `<a href="${item.link}">${item.title}</a>`;
+                    } else if (tab === 'artists') {
+                        listItem = `<a href="#">${item.id}</a>`;
+                    } else if (tab === 'albums') {
+                        listItem = `<a href="#">${item.name}</a>`;
+                    }
+                    const li = document.createElement('li');
+                    li.innerHTML = listItem;
+                    resultsList.appendChild(li);
+                });
+            } else {
+                resultsList.innerHTML = '<li>没有找到相关结果</li>';
+            }
+        }
+
+        window.onload = function() {
+            fetchData();
+        };
+    </script>
+</body>
+</html>
