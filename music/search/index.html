@@ -209,7 +209,7 @@
                 return {
                     id: idPart.split(':')[1],
                     title: namePart.split(':')[1],
-                    link: linkPart.split(':')[1]
+                    link: linkPart.match(/link:(.*)\」/)[1]
                 };
             });
 
