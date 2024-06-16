@@ -205,11 +205,12 @@
             const artistText = await artistResponse.text();
 
             songs = songText.trim().split('\n').map(line => {
-                const [idPart, namePart, linkPart] = line.split(' ');
+                const [idPart, namePart, linkPart, singerPart] = line.split(' ');
                 return {
                     id: idPart.split(':')[1],
                     title: namePart.split(':')[1],
-                    link: linkPart.match(/link:(.*)\」/)[1]
+                    link: linkPart.match(/link:(.*)」/)[1],
+                    singer: singerPart.split(':')[1]
                 };
             });
 
@@ -235,7 +236,7 @@
             if (query) {
                 let results = [];
                 if (tab === 'songs') {
-                    results = songs.filter(song => song.title.toLowerCase().includes(query));
+                    results = songs.filter(song => song.title.toLowerCase().includes(query) || song.singer.toLowerCase().includes(query));
                 } else if (tab === 'artists') {
                     results = artists.filter(artist => artist.id.toLowerCase().includes(query));
                 } else if (tab === 'albums') {
@@ -264,7 +265,7 @@
                 data.forEach(item => {
                     let listItem = '';
                     if (tab === 'songs') {
-                        listItem = `<a href="${item.link}">${item.title}</a>`;
+                        listItem = `<a href="${item.link}">${item.title} - ${item.singer}</a>`;
                     } else if (tab === 'artists') {
                         listItem = `<a href="#">${item.id}</a>`;
                     } else if (tab === 'albums') {
