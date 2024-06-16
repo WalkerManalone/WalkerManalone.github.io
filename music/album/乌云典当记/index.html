@@ -217,6 +217,9 @@
         <div id="bio" class="bio-container">
             <p id="bioContent"></p>
         </div>
+
+        <!-- Disqus 评论框 -->
+        <div id="disqus_thread"></div>
     </div>
 
     <div class="footer">
@@ -244,5 +247,20 @@
     </div>
 
     <script src="https://wuxiandian.site/music/js/album.js"></script>
+
+    <!-- Disqus 嵌入代码 -->
+    <script>
+        var disqus_config = function () {
+            this.page.url = "https://wuxiandian.site/music/album/%E4%B9%8C%E4%BA%91%E5%85%B8%E5%BD%93%E8%AE%B0/";  // 替换为您的页面 URL
+            this.page.identifier = "乌云典当记"; // 替换为您的页面 identifier
+        };
+        (function() {
+            var d = document, s = d.createElement('script');
+            s.src = 'https://wuxiandian.disqus.com/embed.js';  // 替换为您获取的 Disqus embed.js URL
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </body>
 </html>
