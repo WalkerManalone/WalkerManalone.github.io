@@ -67,17 +67,17 @@
 
         .song-list {
             margin-top: 20px;
+            text-align: left;
+            padding-left: 20px; /* 调整为左对齐，并增加内边距 */
         }
 
         .song-list h3 {
-            text-align: left;
             font-size: 20px;
             color: #333;
+            margin-bottom: 10px;
         }
 
         .song-item {
-            display: flex;
-            flex-direction: column;
             padding: 10px 0;
             border-bottom: 1px solid #ddd;
         }
@@ -90,17 +90,19 @@
             font-size: 16px;
             color: #333;
             display: flex;
-            flex-direction: column;
+            justify-content: space-between; /* 两端对齐 */
             text-decoration: none;
         }
 
         .song-title a {
             text-decoration: none; /* 去除下划线 */
+            display: block;
+            width: 100%;
         }
 
         .artist-name {
             color: #999;
-            margin-left: 20px; /* 偏移量 */
+            margin-left: 20px;
         }
 
         .favorite-album {
@@ -162,12 +164,26 @@
             color: #333;
             text-decoration: none;
             border-bottom: 2px solid transparent;
+            cursor: pointer;
         }
 
         .nav-item.active {
             font-weight: bold;
             border-bottom: 2px solid #333;
         }
+        
+        .content {
+            padding: 20px;
+        }
+
+        .bio-container, .songs-container {
+            display: none;
+        }
+
+        .bio-container.active, .songs-container.active {
+            display: block;
+        }
+
     </style>
 </head>
 <body>
@@ -183,23 +199,23 @@
             <p>发行日期: 2013</p>
             <p>歌手: 万能青年旅店</p>
         </div>
-        <a href="edit_album.php?id=乌云典当记" class="favorite-album">编辑专辑</a>
+        <a href="edit_album.php?id=1" class="favorite-album">编辑专辑</a>
     </div>
 
     <div class="nav-container">
-        <a href="album.php?id=乌云典当记" class="nav-item active">曲目</a>
-        <a href="album.php?id=乌云典当记&section=bio" class="nav-item">百科</a>
+        <span id="songsTab" class="nav-item active">曲目</span>
+        <span id="bioTab" class="nav-item">百科</span>
     </div>
 
     <div class="content">
         <div id="songs" class="songs-container active">
-            <ul class="song-list" id="song-list">
-                <!-- Songs will be loaded here by JavaScript -->
+            <ul id="songList" class="song-list">
+                <!-- 曲目内容将由 JavaScript 动态插入 -->
             </ul>
         </div>
 
         <div id="bio" class="bio-container">
-        
+            <p id="bioContent"></p>
         </div>
     </div>
 
@@ -227,44 +243,6 @@
         </a>
     </div>
 
-    <script>
-        // 读取song.txt文件并解析内容
-        fetch('data/song.txt')
-            .then(response => response.text())
-            .then(data => {
-                // 按行分割歌曲信息
-                const songs = data.split('\n');
-                
-                // 获取歌单容器
-                const songList = document.getElementById('song-list');
-
-                // 解析并生成歌单
-                songs.forEach(song => {
-                    if (song.trim() !== '') {
-                        const parts = song.split('|');
-                        const number = parts[0].split(':')[1].trim();
-                        const namePart = parts[1].split('「');
-                        const songName = namePart[0].split(':')[1].trim();
-                        const artistName = namePart[1].split('」')[0];
-                        const link = namePart[1].match(/\[link:(.*?)\]/)[1];
-
-                        const songItem = document.createElement('li');
-                        songItem.classList.add('song-item');
-
-                        songItem.innerHTML = `
-                            <div class="song-title">
-                                <a href="${link}">
-                                    <strong>${number}. ${songName}</strong>
-                                    <span class="artist-name">${artistName}</span>
-                                </a>
-                            </div>
-                        `;
-
-                        songList.appendChild(songItem);
-                    }
-                });
-            })
-            .catch(error => console.error('Error fetching song.txt:', error));
-    </script>
+    <script src="https://wuxiandian.site/music/js/album.js"></script>
 </body>
 </html>
