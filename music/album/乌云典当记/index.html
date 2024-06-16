@@ -193,38 +193,14 @@
 
     <div class="content">
         <div id="songs" class="songs-container active">
-            <ul class="song-list">
-                <?php
-                // 从静态文件中获取曲目信息
-                $file_path = 'data/song.txt';
-                $song_data = file_get_contents($file_path);
-                $songs = explode("\n", $song_data);
-
-                foreach ($songs as $index => $song) {
-                    if (trim($song) !== '') {
-                        list($song_name, $artist_name) = explode('「', trim($song, ' 」'));
-                        $song_url = 'https://wuxiandian.site/music/track/' . urlencode($song_name);
-                ?>
-                        <li class="song-item">
-                            <div class="song-title">
-                                <a href="<?php echo $song_url; ?>">
-                                    <strong><?php echo ($index + 1) . '. ' . htmlspecialchars($song_name); ?></strong>
-                                    <span class="artist-name"><?php echo htmlspecialchars($artist_name); ?></span>
-                                </a>
-                            </div>
-                        </li>
-                <?php
-                    }
-                }
-                ?>
+            <ul class="song-list" id="song-list">
+                <!-- Songs will be loaded here by JavaScript -->
             </ul>
         </div>
 
-        <?php if (isset($_GET['section']) && $_GET['section'] === 'bio'): ?>
-            <div id="bio" class="bio-container active">
-                <p>从静态文件加载专辑百科内容。</p>
-            </div>
-        <?php endif; ?>
+        <div id="bio" class="bio-container">
+        
+        </div>
     </div>
 
     <div class="footer">
@@ -250,5 +226,45 @@
             我的
         </a>
     </div>
+
+    <script>
+        // 读取song.txt文件并解析内容
+        fetch('data/song.txt')
+            .then(response => response.text())
+            .then(data => {
+                // 按行分割歌曲信息
+                const songs = data.split('\n');
+                
+                // 获取歌单容器
+                const songList = document.getElementById('song-list');
+
+                // 解析并生成歌单
+                songs.forEach(song => {
+                    if (song.trim() !== '') {
+                        const parts = song.split('|');
+                        const number = parts[0].split(':')[1].trim();
+                        const namePart = parts[1].split('「');
+                        const songName = namePart[0].split(':')[1].trim();
+                        const artistName = namePart[1].split('」')[0];
+                        const link = namePart[1].match(/\[link:(.*?)\]/)[1];
+
+                        const songItem = document.createElement('li');
+                        songItem.classList.add('song-item');
+
+                        songItem.innerHTML = `
+                            <div class="song-title">
+                                <a href="${link}">
+                                    <strong>${number}. ${songName}</strong>
+                                    <span class="artist-name">${artistName}</span>
+                                </a>
+                            </div>
+                        `;
+
+                        songList.appendChild(songItem);
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching song.txt:', error));
+    </script>
 </body>
 </html>
