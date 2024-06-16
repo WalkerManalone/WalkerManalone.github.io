@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($album_name); ?> - 专辑页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        .header {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header .logo {
+            font-size: 24px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .header .download {
+            background-color: #ffcc00;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .album-container {
+            padding: 20px;
+            text-align: center;
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px;
+            border-radius: 8px;
+        }
+
+        .album-cover {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 8px;
+        }
+
+        .album-info {
+            text-align: left;
+            margin-top: 10px;
+        }
+
+        .album-info h2 {
+            font-size: 24px;
+            margin: 10px 0;
+        }
+
+        .album-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .song-list {
+            margin-top: 20px;
+        }
+
+        .song-list h3 {
+            text-align: left;
+            font-size: 20px;
+            color: #333;
+        }
+
+        .song-item {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .song-item:last-child {
+            border-bottom: none;
+        }
+
+        .song-title {
+            font-size: 16px;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+        }
+
+        .song-title a {
+            text-decoration: none; /* 去除下划线 */
+        }
+
+        .artist-name {
+            color: #999;
+            margin-left: 20px; /* 偏移量 */
+        }
+
+        .favorite-album {
+            background-color: #ffcc00;
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin-top: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .footer {
+            background-color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            color: #333;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 20px;
+        }
+
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .bottom-bar a {
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .bottom-bar a img {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* 新增导航栏样式 */
+        .nav-container {
+            text-align: center;
+            margin: 20px 0;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .nav-item {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 18px;
+            color: #333;
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+        }
+
+        .nav-item.active {
+            font-weight: bold;
+            border-bottom: 2px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="#" class="logo">无线电</a>
+        <a href="#" class="download">下载APP</a>
+    </div>
+
+    <div class="album-container">
+        <img src="img/cover.png" alt="专辑封面" class="album-cover">
+        <div class="album-info">
+            <h2><?php echo htmlspecialchars($album_name); ?></h2>
+            <p>发行日期: 2024-06-17</p>
+            <p>歌手: 罗大佑</p>
+        </div>
+        <a href="edit_album.php?id=<?php echo urlencode($album_id); ?>" class="favorite-album">编辑专辑</a>
+    </div>
+
+    <div class="nav-container">
+        <a href="album.php?id=<?php echo urlencode($album_name); ?>" class="nav-item active">曲目</a>
+        <a href="album.php?id=<?php echo urlencode($album_name); ?>&section=bio" class="nav-item">百科</a>
+    </div>
+
+    <div class="content">
+        <div id="songs" class="songs-container active">
+            <ul class="song-list">
+                <?php
+                // 从静态文件中获取曲目信息
+                $file_path = 'data/song.txt';
+                $song_data = file_get_contents($file_path);
+                $songs = explode("\n", $song_data);
+
+                foreach ($songs as $index => $song) {
+                    if (trim($song) !== '') {
+                        list($song_name, $artist_name) = explode('「', trim($song, ' 」'));
+                ?>
+                        <li class="song-item">
+                            <div class="song-title">
+                                <a href="#">
+                                    <strong><?php echo ($index + 1) . '. ' . htmlspecialchars($song_name); ?></strong>
+                                    <span class="artist-name"><?php echo htmlspecialchars($artist_name); ?></span>
+                                </a>
+                            </div>
+                        </li>
+                <?php
+                    }
+                }
+                ?>
+            </ul>
+        </div>
+
+        <?php if (isset($_GET['section']) && $_GET['section'] === 'bio'): ?>
+            <div id="bio" class="bio-container active">
+                <p>从静态文件加载专辑百科内容。</p>
+            </div>
+        <?php endif; ?>
+    </div>
+
+    <div class="footer">
+        <p>Copyright © 2023 - 2024 Walkman. All Rights Reserved.</p>
+        <p>安装无线电 发现更多精彩</p>
+    </div>
+
+    <div class="bottom-bar">
+        <a href="index.html">
+            <img src="img/home.png" alt="首页">
+            首页
+        </a>
+        <a href="search.html">
+            <img src="img/search.png" alt="发现">
+            发现
+        </a>
+        <a href="#">
+            <img src="img/library.png" alt="音乐馆">
+            音乐馆
+        </a>
+        <a href="account.php">
+            <img src="img/user.png" alt="我的">
+            我的
+        </a>
+    </div>
+</body>
+</html>
