@@ -3,105 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>评论</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .comment-container {
-            background-color: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            border-radius: 10px;
-            width: 80%;
-            max-width: 600px;
-        }
-
-        .comment-container h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        .comment-container form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .comment-container textarea {
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-            resize: none;
-        }
-
-        .comment-container button {
-            padding: 10px;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            margin-top: 20px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .comment-container button:hover {
-            background-color: #45a049;
-        }
-
-        .comments-list {
-            margin-top: 20px;
-        }
-
-        .comment {
-            background-color: #f9f9f9;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .comment .username {
-            font-weight: bold;
-        }
-
-        .comment .content {
-            margin-top: 5px;
-        }
-    </style>
+    <title>静态网页评论示例</title>
 </head>
 <body>
-    <div class="comment-container">
-        <h1>评论</h1>
-        <div id="disqus_thread"></div>
-        <script>
-            /**
-            *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-            *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
-            /*
-            var disqus_config = function () {
-                this.page.url = window.location.href;  // Replace PAGE_URL with your page's canonical URL variable
-                this.page.identifier = window.location.pathname; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-            };
-            */
-            (function() { // DON'T EDIT BELOW THIS LINE
-                var d = document, s = d.createElement('script');
-                s.src = 'https://wuxiandian.disqus.com/embed.js';  // Replace with your Disqus embed.js link
-                s.setAttribute('data-timestamp', +new Date());
-                (d.head || d.body).appendChild(s);
-            })();
-        </script>
-        <noscript>请启用 JavaScript 查看<a href="https://disqus.com/?ref_noscript">Disqus 评论</a>.</noscript>
-    </div>
+    <h1>我的静态网页</h1>
+    <p>这是一个示例静态网页，用于演示 Disqus 评论集成。</p>
+
+    <!-- Disqus 评论框 -->
+    <div id="disqus_thread"></div>
+
+    <!-- Disqus 嵌入代码 -->
+    <script>
+        var disqus_config = function () {
+            this.page.url = window.location.href;
+            this.page.identifier = window.location.pathname;
+        };
+        (function() {
+            var d = document, s = d.createElement('script');
+            s.src = 'https://yourdisqusname.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 </body>
 </html>
