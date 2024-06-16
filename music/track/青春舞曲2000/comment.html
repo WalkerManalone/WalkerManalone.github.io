@@ -6,8 +6,8 @@
     <title>静态网页评论示例</title>
 </head>
 <body>
-    <h1>我的静态网页</h1>
-    <p>这是一个示例静态网页，用于演示 Disqus 评论集成。</p>
+    <h1>青春舞曲2000</h1>
+    <p>这是青春舞曲2000的页面，用于演示 Disqus 评论集成。</p>
 
     <!-- Disqus 评论框 -->
     <div id="disqus_thread"></div>
@@ -15,12 +15,12 @@
     <!-- Disqus 嵌入代码 -->
     <script>
         var disqus_config = function () {
-            this.page.url = window.location.href;
-            this.page.identifier = window.location.pathname;
+            this.page.url = "https://wuxiandian.site/music/track/%E9%9D%92%E6%98%A5%E8%88%9E%E6%9B%B22000/";
+            this.page.identifier = "青春舞曲2000";
         };
         (function() {
             var d = document, s = d.createElement('script');
-            s.src = 'https://yourdisqusname.disqus.com/embed.js';
+            s.src = 'https://wuxiandian.disqus.com/embed.js'; // 替换为您获取的 Disqus embed.js URL
             s.setAttribute('data-timestamp', +new Date());
             (d.head || d.body).appendChild(s);
         })();
