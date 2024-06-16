@@ -179,16 +179,16 @@
     <div class="album-container">
         <img src="img/cover.png" alt="专辑封面" class="album-cover">
         <div class="album-info">
-            <h2><?php echo htmlspecialchars($album_name); ?></h2>
+            <h2>乌云典当记</h2>
             <p>发行日期: 2013</p>
             <p>歌手: 万能青年旅店</p>
         </div>
-        <a href="edit_album.php?id=<?php echo urlencode($album_id); ?>" class="favorite-album">编辑专辑</a>
+        <a href="edit_album.php?id=乌云典当记" class="favorite-album">编辑专辑</a>
     </div>
 
     <div class="nav-container">
-        <a href="album.php?id=<?php echo urlencode($album_name); ?>" class="nav-item active">曲目</a>
-        <a href="album.php?id=<?php echo urlencode($album_name); ?>&section=bio" class="nav-item">百科</a>
+        <a href="album.php?id=乌云典当记" class="nav-item active">曲目</a>
+        <a href="album.php?id=乌云典当记&section=bio" class="nav-item">百科</a>
     </div>
 
     <div class="content">
@@ -203,10 +203,11 @@
                 foreach ($songs as $index => $song) {
                     if (trim($song) !== '') {
                         list($song_name, $artist_name) = explode('「', trim($song, ' 」'));
+                        $song_url = 'https://wuxiandian.site/music/track/' . urlencode($song_name);
                 ?>
                         <li class="song-item">
                             <div class="song-title">
-                                <a href="#">
+                                <a href="<?php echo $song_url; ?>">
                                     <strong><?php echo ($index + 1) . '. ' . htmlspecialchars($song_name); ?></strong>
                                     <span class="artist-name"><?php echo htmlspecialchars($artist_name); ?></span>
                                 </a>
