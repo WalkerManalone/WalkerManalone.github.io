@@ -205,27 +205,32 @@
             const artistText = await artistResponse.text();
 
             songs = songText.trim().split('\n').map(line => {
-                const [idPart, namePart, linkPart, singerPart] = line.split(' ');
+                const idMatch = line.match(/id:(\d+)/);
+                const nameMatch = line.match(/name:(.*?)「/);
+                const linkMatch = line.match(/link:(.*?)」/);
+
                 return {
-                    id: idPart.split(':')[1],
-                    title: namePart.split(':')[1],
-                    link: linkPart.match(/link:(.*)」/)[1],
-                    singer: singerPart.split(':')[1]
+                    id: idMatch ? idMatch[1] : '',
+                    title: nameMatch ? nameMatch[1] : '',
+                    link: linkMatch ? linkMatch[1] : ''
                 };
             });
 
             albums = albumText.trim().split('\n').map(line => {
-                const [idPart, namePart] = line.split(' ');
+                const idPart = line.match(/id:(\d+)/);
+                const namePart = line.match(/name:(.*)/);
                 return {
-                    id: idPart.split(':')[1],
-                    name: namePart.split(':')[1]
+                    id: idPart ? idPart[1] : '',
+                    name: namePart ? namePart[1] : ''
                 };
             });
 
             artists = artistText.trim().split('\n').map(line => {
-                const [idPart] = line.split(' ');
+                const idPart = line.match(/id:(\d+)/);
+                const namePart = line.match(/name:(.*)/);
                 return {
-                    id: idPart.split(':')[1]
+                    id: idPart ? idPart[1] : '',
+                    name: namePart ? namePart[1] : ''
                 };
             });
         }
@@ -236,9 +241,9 @@
             if (query) {
                 let results = [];
                 if (tab === 'songs') {
-                    results = songs.filter(song => song.title.toLowerCase().includes(query) || song.singer.toLowerCase().includes(query));
+                    results = songs.filter(song => song.title.toLowerCase().includes(query));
                 } else if (tab === 'artists') {
-                    results = artists.filter(artist => artist.id.toLowerCase().includes(query));
+                    results = artists.filter(artist => artist.name.toLowerCase().includes(query));
                 } else if (tab === 'albums') {
                     results = albums.filter(album => album.name.toLowerCase().includes(query));
                 }
@@ -265,9 +270,9 @@
                 data.forEach(item => {
                     let listItem = '';
                     if (tab === 'songs') {
-                        listItem = `<a href="${item.link}">${item.title} - ${item.singer}</a>`;
+                        listItem = `<a href="${item.link}">${item.title}</a>`;
                     } else if (tab === 'artists') {
-                        listItem = `<a href="#">${item.id}</a>`;
+                        listItem = `<a href="#">${item.name}</a>`;
                     } else if (tab === 'albums') {
                         listItem = `<a href="#">${item.name}</a>`;
                     }
