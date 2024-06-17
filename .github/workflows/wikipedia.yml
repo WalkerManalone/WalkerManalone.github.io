@@ -1,0 +1,30 @@
+name: Deploy Wikipedia Mirror to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # 或者您想要监控的其他分支
+  schedule:
+    - cron: '0 0 * * *'  # 每天定时触发一次部署
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: sudo apt-get install -y wget
+
+      - name: Fetch Wikipedia content
+        run: |
+          mkdir -p Wikipedia
+          wget -O Wikipedia/index.html https://zh.m.wikipedia.org/wiki/Wikipedia:%E9%A6%96%E9%A1%B5
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./Wikipedia
