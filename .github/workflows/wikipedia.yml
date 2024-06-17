@@ -6,6 +6,7 @@ on:
       - main  # 或者您想要监控的其他分支
   schedule:
     - cron: '0 0 * * *'  # 每天定时触发一次部署
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -21,7 +22,7 @@ jobs:
       - name: Fetch Wikipedia content
         run: |
           mkdir -p Wikipedia
-          wget -O Wikipedia/index.html https://zh.m.wikipedia.org/wiki/Wikipedia:%E9%A6%96%E9%A1%B5
+          wget -O Wikipedia/index.html "https://zh.m.wikipedia.org/wiki/Wikipedia:%E9%A6%96%E9%A1%B5"
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
