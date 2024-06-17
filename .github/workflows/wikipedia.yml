@@ -23,7 +23,19 @@ jobs:
         run: |
           mkdir -p Wikipedia
           wget -O Wikipedia/index.html "https://zh.m.wikipedia.org/wiki/Wikipedia:%E9%A6%96%E9%A1%B5"
-      
+
+      - name: Deploy to GitHub Pages
+        run: |
+          mkdir -p ${{ github.workspace }}/Wikipedia
+          cp -R Wikipedia/* ${{ github.workspace }}/Wikipedia
+
+      - name: Commit and push changes to GitHub Pages
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update Wikipedia mirror
+          branch: main
+          files: Wikipedia/index.html
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
